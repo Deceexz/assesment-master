@@ -2,7 +2,6 @@
 session_start();
 include 'koneksi.php'; // koneksi ke database
 
-// Cek apakah user sudah login
 if (!isset($_SESSION['username'])) {
     echo "Anda harus login terlebih dahulu.";
     exit;
@@ -11,18 +10,16 @@ if (!isset($_SESSION['username'])) {
 $username_session = $_SESSION['username'];
 $success = $error = "";
 
-// Ambil data user berdasarkan username dari session
+// Ambil data user
 $user_query = "SELECT * FROM act_users WHERE username = '$username_session'";
 $user_result = mysqli_query($conn, $user_query);
 $user = mysqli_fetch_assoc($user_result);
 
-// Jika data user tidak ditemukan
 if (!$user) {
     echo "Data pengguna tidak ditemukan atau terjadi kesalahan query: " . mysqli_error($conn);
     exit;
 }
 
-// Proses update
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
@@ -33,49 +30,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $password = $_POST['password'];
     $retype_password = $_POST['retype_password'];
 
-    // Cek apakah username baru sudah digunakan oleh user lain
-    $check_query = "SELECT * FROM act_users WHERE username = '$new_username' AND username != '$username_session'";
-    $check_result = mysqli_query($conn, $check_query);
-
-    if (mysqli_num_rows($check_result) > 0) {
-        $error = "Username sudah digunakan oleh pengguna lain.";
-    } elseif (!empty($password) && $password !== $retype_password) {
-        $error = "Password yang Anda masukkan tidak cocok!";
+    // Validasi role_id hanya boleh 1 (Admin) atau 2 (Author)
+    if ($role_id !== 1 && $role_id !== 2) {
+        $error = "Role ID tidak tersedia.";
     } else {
-        if (!empty($password)) {
-            $hashed_password = md5($password);
-            $update_query = "UPDATE act_users SET 
-                first_name = '$first_name',
-                last_name = '$last_name',
-                email = '$email',
-                username = '$new_username',
-                password = '$hashed_password',
-                tanggal_lahir = '$birthdate',
-                role_id = '$role_id'
-                WHERE username = '$username_session'";
+        $check_query = "SELECT * FROM act_users WHERE username = '$new_username' AND username != '$username_session'";
+        $check_result = mysqli_query($conn, $check_query);
+
+        if (mysqli_num_rows($check_result) > 0) {
+            $error = "Username sudah digunakan oleh pengguna lain.";
+        } elseif (!empty($password) && $password !== $retype_password) {
+            $error = "Password yang Anda masukkan tidak cocok!";
         } else {
-            $update_query = "UPDATE act_users SET 
-                first_name = '$first_name',
-                last_name = '$last_name',
-                email = '$email',
-                username = '$new_username',
-                tanggal_lahir = '$birthdate',
-                role_id = '$role_id'
-                WHERE username = '$username_session'";
-        }
+            if (!empty($password)) {
+                $hashed_password = md5($password);
+                $update_query = "UPDATE act_users SET 
+                    first_name = '$first_name',
+                    last_name = '$last_name',
+                    email = '$email',
+                    username = '$new_username',
+                    password = '$hashed_password',
+                    tanggal_lahir = '$birthdate',
+                    role_id = '$role_id'
+                    WHERE username = '$username_session'";
+            } else {
+                $update_query = "UPDATE act_users SET 
+                    first_name = '$first_name',
+                    last_name = '$last_name',
+                    email = '$email',
+                    username = '$new_username',
+                    tanggal_lahir = '$birthdate',
+                    role_id = '$role_id'
+                    WHERE username = '$username_session'";
+            }
 
-        if (mysqli_query($conn, $update_query)) {
-            $success = "Profil berhasil diperbarui.";
-
-            // Perbarui session username jika berubah
-            $_SESSION['username'] = $new_username;
-
-            // Refresh user data
-            $user_query = "SELECT * FROM act_users WHERE username = '$new_username'";
-            $user_result = mysqli_query($conn, $user_query);
-            $user = mysqli_fetch_assoc($user_result);
-        } else {
-            $error = "Terjadi kesalahan saat memperbarui: " . mysqli_error($conn);
+            if (mysqli_query($conn, $update_query)) {
+                $success = "Profil berhasil diperbarui.";
+                $_SESSION['username'] = $new_username;
+                $user_query = "SELECT * FROM act_users WHERE username = '$new_username'";
+                $user_result = mysqli_query($conn, $user_query);
+                $user = mysqli_fetch_assoc($user_result);
+            } else {
+                $error = "Terjadi kesalahan saat memperbarui: " . mysqli_error($conn);
+            }
         }
     }
 }
@@ -88,6 +85,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Update Profile</title>
   <link rel="stylesheet" href="register_styles.css" />
+  <style>
+    .alert-success {
+      color: #155724;
+      background-color: #d4edda;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .alert-error {
+      color: #721c24;
+      background-color: #f8d7da;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
   <div class="wave-background"></div>
@@ -102,9 +115,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
       </div>
 
       <?php if ($success): ?>
-        <p style="color: green;"><?= $success ?></p>
+        <div class="alert-success"><?= $success ?></div>
       <?php elseif ($error): ?>
-        <p style="color: red;"><?= $error ?></p>
+        <div class="alert-error"><?= $error ?></div>
       <?php endif; ?>
 
       <div class="input-group-custom">
@@ -155,7 +168,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
       <button type="submit" class="primary-btn" name="update">Update Profile</button>
     </form>
   </div>
-
 
   <script>
     function togglePassword(inputId) {

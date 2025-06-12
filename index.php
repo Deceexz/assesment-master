@@ -28,7 +28,7 @@
           <a href="politics.php" class="category-btn">Politics</a>
           <a href="entertainment.php" class="category-btn">Entertainment</a>
           <a href="business.php" class="category-btn">Business</a>
-          <a href="technology.php" class="category-btn">Favorite</a>
+          <a href="favorite.php" class="category-btn">Favorite</a>
         </div>
 
         <!-- Artikel -->
@@ -46,21 +46,22 @@
           if (isset($_GET['search'])) {
             $keyword = mysqli_real_escape_string($conn, $_GET['search']);
             $query = "
-              SELECT p.*, c.category_description 
-              FROM post_article p
-              LEFT JOIN category_post c ON p.category_id = c.category_id
-              WHERE p.title LIKE '%$keyword%' AND p.status = 'active'";
+                SELECT p.*, c.category_description 
+                FROM post_article p
+                LEFT JOIN category_post c ON p.category_id = c.category_id
+                WHERE (p.title LIKE '%$keyword%' OR p.username LIKE '%$keyword%')
+                AND p.status = 'active'";
             $result = mysqli_query($conn, $query);
             echo '<h2>Hasil Pencarian untuk "' . htmlspecialchars($keyword) . '"</h2>';
-          } else {
+        } else {
             $query = "
-              SELECT p.*, c.category_description 
-              FROM post_article p
-              LEFT JOIN category_post c ON p.category_id = c.category_id
-              WHERE p.status = 'active'";
+                SELECT p.*, c.category_description 
+                FROM post_article p
+                LEFT JOIN category_post c ON p.category_id = c.category_id
+                WHERE p.status = 'active'";
             $result = mysqli_query($conn, $query);
             echo '<h2>Artikel Utama</h2>';
-          }
+        }
 
           if (mysqli_num_rows($result) > 0) {
             echo '<div class="article-list">';

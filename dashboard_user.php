@@ -8,6 +8,12 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Periksa apakah role_id pengguna adalah 2
+if ($_SESSION['role_id'] != 2) {
+    header("Location: login_user.php");
+    exit();
+}
+
 include 'koneksi.php';
 
 $username = $_SESSION['username'];
