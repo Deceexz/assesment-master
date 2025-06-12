@@ -2,7 +2,7 @@ Login admin menggunakan :
   username : penulis12
   password : user
 
-Login admin menggunakan :
+Login author menggunakan :
   username : admin
   password : admin
   
