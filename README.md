@@ -6,4 +6,4 @@ Login author menggunakan :
   username : admin
   password : admin
   
-pada bagian file upload usahakan menyamakan dengan localhost karena ada bagian dirr di script pada proses_pembuatan_artikel.php dan proses_edit_artikel.php
+pada bagian file upload usahakan untuk menyamakan dengan yang ada di localhost karena ada bagian dirr di script pada proses_pembuatan_artikel.php dan juga proses_edit_artikel.php
