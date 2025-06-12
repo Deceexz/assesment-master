@@ -1,0 +1,465 @@
+/* Gaya untuk sidebar pada index.php */
+#sidebar {
+    background-color: #f4f4f4;
+    padding: 3px;
+    margin: 0 auto; /* Membuat sidebar terletak di tengah */
+    max-width: 850px; /* Menetapkan lebar maksimum untuk sidebar */
+}
+
+.text-center {
+    text-align: center;
+}
+
+
+#sidebar .sidebar h2 {
+    color: #333;
+    font-size: 1.2em;
+    margin-bottom: 0px;
+    text-align: center; /* Mengatur teks judul berada di tengah */
+}
+
+#sidebar .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex; /* Membuat daftar menjadi tata letak fleksibel */
+    flex-direction: row; /* Mengatur arah tata letak menjadi horizontal */
+    justify-content: space-between; /* Membuat ruang yang sama di antara setiap item */
+}
+
+#sidebar .sidebar ul li {
+    margin-bottom: 10px;
+}
+
+#sidebar .sidebar ul li a {
+    text-decoration: none;
+    color: #666;
+    font-weight: bold;
+    padding: 5px 10px; /* Memberikan padding pada setiap tautan */
+    border: 1px solid #ccc; /* Menambahkan garis tepi */
+    border-radius: 5px; /* Mengubah sudut menjadi melengkung */
+}
+
+#sidebar .sidebar ul li a:hover {
+    color: #000;
+    background-color: #ddd; /* Warna latar belakang saat tautan dihover */
+}
+
+/* Gaya untuk sidebar pada membuat_berita.php */
+.sidebar_mb {
+    background-color: #f4f4f4;
+    padding: 5px;
+    margin: 0 auto; /* Membuat sidebar terletak di tengah */
+    max-width: 800px; /* Menetapkan lebar maksimum untuk sidebar */
+}
+
+.sidebar_mb .sidebar h2 {
+    color: #333;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    text-align: center; /* Mengatur teks judul berada di tengah */
+}
+
+.sidebar_mb .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex; /* Membuat daftar menjadi tata letak fleksibel */
+    flex-direction: row; /* Mengatur arah tata letak menjadi horizontal */
+    justify-content: space-between; /* Membuat ruang yang sama di antara setiap item */
+}
+
+.sidebar_mb .sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar_mb .sidebar ul li a {
+    text-decoration: none;
+    color: #666;
+    font-weight: bold;
+    padding: 5px 10px; /* Memberikan padding pada setiap tautan */
+    border: 1px solid #ccc; /* Menambahkan garis tepi */
+    border-radius: 5px; /* Mengubah sudut menjadi melengkung */
+}
+
+.sidebar_mb .sidebar ul li a:hover {
+    color: #000;
+    background-color: #ddd; /* Warna latar belakang saat tautan dihover */
+}
+
+/* Gaya untuk kontainer dan header */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center; /* Mengatur teks judul berada di tengah */
+}
+
+header h1 {
+    margin: 0;
+}
+
+
+/* Gaya untuk form membuat artikel baru */
+.form-membuat-artikel_mb {
+    max-width: 600px;
+    margin: 20px auto; /* Menengahkan form */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-group_mb {
+    margin-bottom: 20px;
+}
+
+.input-group_mb label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group_mb input,
+.input-group_mb textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+textarea_mb {
+    resize: vertical;
+}
+
+button.button_mb {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff; /* Warna biru */
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button.button_mb:hover {
+    background-color: #0056b3; /* Warna biru saat hover */
+}
+
+/* Gaya untuk kategori */
+.select-category {
+    margin-bottom: 20px;
+}
+
+.select-category label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.select-category select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Gaya untuk form upload gambar */
+.upload-form {
+    margin-top: 20px;
+}
+
+.upload-form label {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.upload-form input[type="file"] {
+    width: 98%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.login-button._idx {
+    position: absolute;
+    top: 90px;
+    right: 20px;
+}
+
+.login-btn._idx {
+    padding: 10px 20px;
+    background-color: #007bff; /* Warna biru */
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+    display: inline-block; /* Menjadikan tombol sebagai inline-block */
+}
+
+.login-btn._idx:hover {
+    background-color: #0056b3; /* Warna biru saat hover */
+}
+
+
+
+.user-info {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    display: flex;
+    flex-direction: column; /* Mengatur tata letak flex menjadi kolom normal */
+    align-items: flex-end; /* Mengatur penempatan elemen ke kanan */
+}
+
+.user-info span {
+    margin-bottom: 10px; /* Memberikan jarak antara teks dan tombol logout */
+    margin-right: 5px;
+}
+
+.logout-dropdown {
+    position: relative;
+}
+
+.logout-btn._lg-da {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.logout-btn._lg-da:hover {
+    background-color: #0056b3;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background-color: #0056b3;
+}
+
+.prev-btn {
+    margin-right: 10px;
+}
+
+.next-btn {
+    margin-left: 10px;
+}
+
+/* CSS untuk menempatkan artikel favorit di sebelah kanan */
+.favorite-articles {
+    /* width: 30%; */
+    /* padding-left: 20px; Padding untuk artikel favorit */
+    /* border-left: 1px solid #ddd; Garis pemisah antara artikel utama dan artikel favorit */
+    box-sizing: border-box; /* Menghitung border ke dalam lebar */
+    overflow: hidden; /* Mengatasi float */
+    /* float: left; Menentukan artikel favorit berada di sebelah kanan */
+}
+
+.favorite-articles h2 {
+    margin-top: 0;
+}
+
+.favorite-articles ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.favorite-articles ul li {
+    margin-bottom: 10px;
+}
+
+.favorite-table {
+    width: 100%; /* Menetapkan lebar tabel */
+    border-collapse: collapse; /* Menggabungkan batas antar sel */
+}
+
+.favorite-table td {
+    border: 1px solid #ddd; /* Garis antar sel */
+    padding: 8px; /* Padding untuk konten */
+}
+
+/* Tambahkan CSS sesuai kebutuhan untuk table dan pagination */
+.article-table {
+width: 100%; /* Mengurangi lebar tabel artikel untuk memberi ruang bagi artikel favorit */
+border-collapse: collapse;
+float: left; /* Menentukan artikel utama berada di sebelah kiri */
+}
+        
+.article-table td, .article-table th {
+border: 1px solid #ddd;
+padding: 8px;
+}
+        
+.article-table th {
+background-color: #f2f2f2;
+}
+        
+.pagination {
+margin-top: 20px;
+text-align: center;
+clear: both; /* Membersihkan float di kedua sisi */
+}
+        
+.pagination a {
+color: black;
+display: inline-block;
+padding: 8px 16px;
+text-decoration: none;
+transition: background-color .3s;
+border: 1px solid #ddd;
+margin: 0 4px;
+}
+        
+.pagination a.active {
+background-color: #4CAF50;
+color: white;
+border: 1px solid #4CAF50;
+}
+        
+.pagination a:hover:not(.active) {background-color: #ddd;}
+
+.btn {
+background-color: DodgerBlue;
+border: none;
+color: white;
+padding: 12px 16px;
+font-size: 16px;
+cursor: pointer;
+            
+}
+          
+/* Darker background on mouse-over */
+.btn:hover {
+background-color: RoyalBlue;
+}
+
+.btn_del {
+background-color: red;
+border: none;
+color: white;
+padding: 12px 16px;
+font-size: 16px;
+cursor: pointer;
+
+}
+          
+/* Darker background on mouse-over */
+.btn_del:hover {
+background-color: red;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.styled-table th,
+.styled-table td {
+    text-align: left;
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.styled-table th {
+    background-color: #fff;
+    color: #1a237e;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.styled-table td strong {
+    color: #1a237e;
+    font-weight: 600;
+}
+
+.btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+/* Tombol biru umum (tidak dipakai lagi untuk suspend/unsuspend) */
+.update-btn {
+    background-color: #6aa9ff;
+    color: white;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #539cf5;
+}
+
+.delete-btn {
+    background-color: #ff7c67;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #f76650;
+}
+
+.status-aktif {
+    color: green;
+    font-weight: bold;
+}
+
+.status-ditangguhkan {
+    color: red;
+    font-weight: bold;
+}
+
+/* Tombol suspend (merah) dan unsuspend (hijau) */
+.btn-suspend {
+    background-color: #e74c3c;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-suspend:hover {
+    background-color: #c0392b;
+}
+
+.btn-unsuspend {
+    background-color: #27ae60;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-unsuspend:hover {
+    background-color: #1e8449;
+}
+
+
+          
+

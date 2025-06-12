@@ -1,0 +1,32 @@
+/* Gaya untuk sidebar di halaman membuat_berita.php */
+#sidebar {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+#sidebar h2 {
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    margin-bottom: 5px;
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: #666;
+    font-weight: bold;
+}
+
+#sidebar ul li a:hover {
+    color: #000;
+}

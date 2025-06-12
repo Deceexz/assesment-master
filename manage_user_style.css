@@ -1,0 +1,148 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.styled-table th,
+.styled-table td {
+    text-align: left;
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.styled-table th {
+    background-color: #fff;
+    color: #1a237e;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.styled-table td strong {
+    color: #1a237e;
+    font-weight: 600;
+}
+
+.btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+/* Tombol biru umum (tidak dipakai lagi untuk suspend/unsuspend) */
+.update-btn {
+    background-color: #6aa9ff;
+    color: white;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #539cf5;
+}
+
+.delete-btn {
+    background-color: #ff7c67;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #f76650;
+}
+
+.status-aktif {
+    color: green;
+    font-weight: bold;
+}
+
+.status-ditangguhkan {
+    color: red;
+    font-weight: bold;
+}
+
+/* Tombol suspend (merah) dan unsuspend (hijau) */
+.btn-suspend {
+    background-color: #e74c3c;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-suspend:hover {
+    background-color: #c0392b;
+}
+
+.btn-unsuspend {
+    background-color: #27ae60;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-unsuspend:hover {
+    background-color: #1e8449;
+}
+
+.category-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    background-color: #f9f9f9;
+    padding: 16px;
+    flex-wrap: wrap;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.category-btn {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.category-btn:hover {
+    background-color: #357ABD;
+}
+
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  text-decoration: none;
+}
+
+.edit-button {
+  background-color: #3399ff;
+  border-radius: 50%;
+  color: white;
+}
+
+.takedown-button {
+  background-color: red;
+  border-radius: 5px;
+  color: white;
+}
+.restore-button {
+  background-color: red;
+  border-radius: 5px;
+  color: white;
+}
+.action-button i {
+  font-size: 16px;
+}
