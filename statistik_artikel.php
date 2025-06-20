@@ -74,7 +74,7 @@ while ($row = mysqli_fetch_assoc($result4)) {
 }
 mysqli_stmt_close($stmt4);
 
-// Statistik: Artikel per bulan (Januari - Desember tahun ini)
+// Statistik: Artikel per bulan
 $bulanLabels = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
     "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 $bulanCounts = array_fill(0, 12, 0);
@@ -107,6 +107,7 @@ mysqli_stmt_close($stmt5);
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="container.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <style>
     body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
     h2 { text-align: center; margin-bottom: 2rem; }
@@ -115,6 +116,7 @@ mysqli_stmt_close($stmt5);
       background: white; padding: 2rem; border-radius: 16px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
+    canvas { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -154,87 +156,121 @@ mysqli_stmt_close($stmt5);
 </div>
 
 <script>
-  const kategoriData = {
-    labels: <?php echo json_encode($kategoriLabels); ?>,
-    datasets: [{
-      label: 'Jumlah Artikel',
-      data: <?php echo json_encode($kategoriCounts); ?>,
-      backgroundColor: '#4e79a7'
-    }]
-  };
+Chart.register(ChartDataLabels);
 
-  const penulisData = {
-    labels: <?php echo json_encode($penulisLabels); ?>,
-    datasets: [{
-      label: 'Total Artikel',
-      data: <?php echo json_encode($penulisCounts); ?>,
-      backgroundColor: '#4CAF50'
-    }]
-  };
+const kategoriData = {
+  labels: <?php echo json_encode($kategoriLabels); ?>,
+  datasets: [{
+    label: 'Jumlah Artikel',
+    data: <?php echo json_encode($kategoriCounts); ?>,
+    backgroundColor: [
+      '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f',
+      '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'
+    ]
+  }]
+};
 
-  const likeArtikelData = {
-    labels: <?php echo json_encode($likeArtikelLabels); ?>,
-    datasets: [{
-      label: 'Jumlah Like',
-      data: <?php echo json_encode($likeArtikelCounts); ?>,
-      backgroundColor: '#f28e2b'
-    }]
-  };
+const penulisData = {
+  labels: <?php echo json_encode($penulisLabels); ?>,
+  datasets: [{
+    label: 'Total Artikel',
+    data: <?php echo json_encode($penulisCounts); ?>,
+    backgroundColor: '#59a14f'
+  }]
+};
 
-  const likePenulisData = {
-    labels: <?php echo json_encode($likePenulisLabels); ?>,
-    datasets: [{
-      label: 'Total Like',
-      data: <?php echo json_encode($likePenulisCounts); ?>,
-      backgroundColor: '#e15759'
-    }]
-  };
+const likeArtikelData = {
+  labels: <?php echo json_encode($likeArtikelLabels); ?>,
+  datasets: [{
+    label: 'Jumlah Like',
+    data: <?php echo json_encode($likeArtikelCounts); ?>,
+    backgroundColor: [
+      '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#af7aa1',
+      '#ff9da7', '#4e79a7', '#edc949', '#9c755f', '#bab0ab'
+    ]
+  }]
+};
 
-  const artikelBulanData = {
-    labels: <?php echo json_encode($bulanLabels); ?>,
-    datasets: [{
-      label: 'Jumlah Artikel per Bulan',
-      data: <?php echo json_encode($bulanCounts); ?>,
-      backgroundColor: '#76b7b2'
-    }]
-  };
+const likePenulisData = {
+  labels: <?php echo json_encode($likePenulisLabels); ?>,
+  datasets: [{
+    label: 'Total Like',
+    data: <?php echo json_encode($likePenulisCounts); ?>,
+    backgroundColor: '#e15759'
+  }]
+};
 
-  new Chart(document.getElementById('kategoriChart'), {
-    type: 'doughnut',
-    data: kategoriData,
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'right' } }
+const artikelBulanData = {
+  labels: <?php echo json_encode($bulanLabels); ?>,
+  datasets: [{
+    label: 'Jumlah Artikel per Bulan',
+    data: <?php echo json_encode($bulanCounts); ?>,
+    backgroundColor: '#76b7b2'
+  }]
+};
+
+const defaultBarOptions = {
+  responsive: true,
+  plugins: {
+    legend: { display: false },
+    datalabels: {
+      anchor: 'end',
+      align: 'end',
+      formatter: Math.round,
+      font: { weight: 'bold' }
     }
-  });
+  },
+  scales: { y: { beginAtZero: true } }
+};
 
-  new Chart(document.getElementById('penulisChart'), {
-    type: 'bar',
-    data: penulisData,
-    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-  });
-
-  new Chart(document.getElementById('likeArtikelChart'), {
-    type: 'bar',
-    data: likeArtikelData,
-    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-  });
-
-  new Chart(document.getElementById('likePenulisChart'), {
-    type: 'bar',
-    data: likePenulisData,
-    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-  });
-
-  new Chart(document.getElementById('artikelBulanChart'), {
-    type: 'bar',
-    data: artikelBulanData,
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } },
-      plugins: { legend: { display: false } }
+new Chart(document.getElementById('kategoriChart'), {
+  type: 'doughnut',
+  data: kategoriData,
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'right' }
     }
-  });
+  }
+});
+
+new Chart(document.getElementById('penulisChart'), {
+  type: 'bar',
+  data: penulisData,
+  options: defaultBarOptions,
+  plugins: [ChartDataLabels]
+});
+
+new Chart(document.getElementById('likeArtikelChart'), {
+  type: 'doughnut',
+  data: likeArtikelData,
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'right' },
+      datalabels: {
+        formatter: Math.round,
+        color: '#000',
+        font: { weight: 'bold' }
+      }
+    }
+  },
+  plugins: [ChartDataLabels]
+});
+
+new Chart(document.getElementById('likePenulisChart'), {
+  type: 'bar',
+  data: likePenulisData,
+  options: defaultBarOptions,
+  plugins: [ChartDataLabels]
+});
+
+new Chart(document.getElementById('artikelBulanChart'), {
+  type: 'bar',
+  data: artikelBulanData,
+  options: defaultBarOptions,
+  plugins: [ChartDataLabels]
+});
 </script>
 
 </body>

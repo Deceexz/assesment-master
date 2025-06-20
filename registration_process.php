@@ -13,6 +13,12 @@ if (isset($_POST['register'])) {
     $tanggal_lahir = $_POST['birthdate'];
     $role_id = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 2;
 
+    // Validasi role_id hanya boleh 1 atau 2
+    if ($role_id !== 1 && $role_id !== 2) {
+        echo '<script>alert("Role ID tidak tersedia!"); window.location.href = "login_user.php";</script>';
+        exit();
+    }
+
     // Validasi apakah username sudah digunakan
     $check_username = "SELECT 1 FROM act_users WHERE username = ?";
     $stmt_username = mysqli_prepare($conn, $check_username);
@@ -34,7 +40,7 @@ if (isset($_POST['register'])) {
     } elseif ($password !== $retype_password) {
         echo '<script>alert("Password yang Anda masukkan tidak cocok!");</script>';
     } else {
-        // Hash password (gunakan password_hash agar lebih aman)
+        // Hash password
         $hashed_password = md5($password);
 
         $insert_query = "INSERT INTO act_users (first_name, last_name, email, username, password, tanggal_lahir, role_id) 
