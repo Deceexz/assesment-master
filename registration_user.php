@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registration Author</title>
   <link rel="stylesheet" href="register_styles.css" />
-  <link rel="stylesheet" href="footer.css" />
 </head>
 <body>
   <div class="wave-background"></div>
@@ -68,8 +67,6 @@
       <button type="submit" class="primary-btn" name="register">Create My Account</button>
     </form>
   </div>
-
-  <?php include 'footer.php'; ?>
 
   <script>
     function togglePassword(inputId) {

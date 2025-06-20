@@ -9,13 +9,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_id = $_POST['user_id'];
 
         // Periksa apakah pengguna dengan ID yang diberikan ada di database
-        $query = "SELECT * FROM act_users WHERE user_id = '$user_id'";
-        $result = mysqli_query($conn, $query);
+        $query = "SELECT * FROM act_users WHERE user_id = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
         if ($result && mysqli_num_rows($result) == 1) {
             // Update status_acc pengguna menjadi 2 (suspended)
-            $update_query = "UPDATE act_users SET status_acc = 2 WHERE user_id = '$user_id'";
-            $update_result = mysqli_query($conn, $update_query);
+            $update_query = "UPDATE act_users SET status_acc = 2 WHERE user_id = ?";
+            $stmt_update = mysqli_prepare($conn, $update_query);
+            mysqli_stmt_bind_param($stmt_update, "i", $user_id);
+            $update_result = mysqli_stmt_execute($stmt_update);
 
             if ($update_result) {
                 // Berhasil memperbarui status_acc, redirect kembali ke halaman manage_user.php

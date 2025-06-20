@@ -11,25 +11,28 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $nama_penulis = $_SESSION['username'] ?? '';
 
-// Ambil data artikel
+// Ambil data artikel milik user (limit 1)
 $article = [];
-$query = "SELECT * FROM post_article WHERE username = '$user_id' LIMIT 1";
-$result = mysqli_query($conn, $query);
-
+$stmt = mysqli_prepare($conn, "SELECT * FROM post_article WHERE username = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, "s", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 if ($result && mysqli_num_rows($result) > 0) {
     $article = mysqli_fetch_assoc($result);
 }
+mysqli_stmt_close($stmt);
 
-// Ambil kategori
-$query_kategori = "SELECT category_id, category_description FROM category_post";
-$result_kategori = mysqli_query($conn, $query_kategori);
+// Ambil kategori dengan prepared statement
 $kategori_options = [];
-
-if ($result_kategori && mysqli_num_rows($result_kategori) > 0) {
-    while ($row = mysqli_fetch_assoc($result_kategori)) {
+$stmt_kat = mysqli_prepare($conn, "SELECT category_id, category_description FROM category_post");
+mysqli_stmt_execute($stmt_kat);
+$result_kat = mysqli_stmt_get_result($stmt_kat);
+if ($result_kat && mysqli_num_rows($result_kat) > 0) {
+    while ($row = mysqli_fetch_assoc($result_kat)) {
         $kategori_options[$row['category_id']] = $row['category_description'];
     }
 }
+mysqli_stmt_close($stmt_kat);
 ?>
 <!DOCTYPE html>
 <html lang="id">

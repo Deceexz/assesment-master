@@ -9,35 +9,49 @@ if (!isset($_SESSION['user_id'])) {
 
 $username = $_SESSION['username'];
 
+// Handle aksi takedown/restore
 if (isset($_GET['action']) && isset($_GET['post_id'])) {
     $post_id = intval($_GET['post_id']);
     $action = $_GET['action'];
     $new_status = ($action === 'restore') ? 'active' : 'takedown';
 
-    $update_query = "UPDATE post_article SET status = '$new_status' WHERE post_id = $post_id AND username = '$username'";
-    if (mysqli_query($conn, $update_query)) {
+    // Binding query untuk update status artikel
+    $update_query = "UPDATE post_article SET status = ? WHERE post_id = ? AND username = ?";
+    $stmt = mysqli_prepare($conn, $update_query);
+    mysqli_stmt_bind_param($stmt, "sis", $new_status, $post_id, $username);
+
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         $notif = ($new_status === 'active') ? 'restore_success' : 'takedown_success';
         header("Location: manage_artikel.php?notif=$notif");
         exit();
     } else {
+        mysqli_stmt_close($stmt);
         echo "Terjadi kesalahan saat memproses data.";
         exit();
     }
 }
 
-$query = "SELECT pa.*, cp.category_description 
-          FROM post_article pa 
-          JOIN category_post cp ON pa.category_id = cp.category_id 
-          WHERE pa.username = '$username'";
-$result = mysqli_query($conn, $query);
+// Ambil semua artikel milik user (binding)
 $articles = [];
+$select_query = "
+    SELECT pa.*, cp.category_description 
+    FROM post_article pa 
+    JOIN category_post cp ON pa.category_id = cp.category_id 
+    WHERE pa.username = ?";
+$stmt = mysqli_prepare($conn, $select_query);
+mysqli_stmt_bind_param($stmt, "s", $username);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 if ($result && mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $articles[] = $row;
     }
 }
+mysqli_stmt_close($stmt);
 
+// Pagination
 $articles_per_page = 10;
 $total_pages = ceil(count($articles) / $articles_per_page);
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;

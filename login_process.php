@@ -10,19 +10,21 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Cari pengguna dengan username yang cocok
-    $query = "SELECT user_id, role_id, username, password, status_acc FROM act_users WHERE username = '$username'";
-    $result = mysqli_query($conn, $query);
+    // Cari pengguna dengan username yang cocok (prepared statement)
+    $query = "SELECT user_id, role_id, username, password, status_acc FROM act_users WHERE username = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result) { // Periksa apakah query berhasil dieksekusi
         if (mysqli_num_rows($result) == 1) {
             // Pengguna ditemukan, periksa password
-            // Pengguna ditemukan, periksa password
-$row = mysqli_fetch_assoc($result);
-$stored_password = $row['password'];
-$status_acc = $row['status_acc'];
+            $row = mysqli_fetch_assoc($result);
+            $stored_password = $row['password'];
+            $status_acc = $row['status_acc'];
 
-if (md5($password) == $stored_password) {
+            if (md5($password) == $stored_password) {
                 // Periksa status akun
                 if ($status_acc == 2) {
                     // Akun ter-suspend, tampilkan pesan kesalahan menggunakan JavaScript
@@ -64,5 +66,8 @@ if (md5($password) == $stored_password) {
         header("Location: login_user.php?error=Terjadi kesalahan. Silakan coba lagi.");
         exit();
     }
+
+    // Tutup prepared statement
+    mysqli_stmt_close($stmt);
 }
 ?>

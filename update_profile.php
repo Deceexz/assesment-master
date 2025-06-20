@@ -10,13 +10,16 @@ if (!isset($_SESSION['username'])) {
 $username_session = $_SESSION['username'];
 $success = $error = "";
 
-// Ambil data user
-$user_query = "SELECT * FROM act_users WHERE username = '$username_session'";
-$user_result = mysqli_query($conn, $user_query);
+// Ambil data user (binding)
+$user_stmt = mysqli_prepare($conn, "SELECT * FROM act_users WHERE username = ?");
+mysqli_stmt_bind_param($user_stmt, "s", $username_session);
+mysqli_stmt_execute($user_stmt);
+$user_result = mysqli_stmt_get_result($user_stmt);
 $user = mysqli_fetch_assoc($user_result);
+mysqli_stmt_close($user_stmt);
 
 if (!$user) {
-    echo "Data pengguna tidak ditemukan atau terjadi kesalahan query: " . mysqli_error($conn);
+    echo "Data pengguna tidak ditemukan atau terjadi kesalahan query.";
     exit;
 }
 
@@ -30,12 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $password = $_POST['password'];
     $retype_password = $_POST['retype_password'];
 
-    // Validasi role_id hanya boleh 1 (Admin) atau 2 (Author)
     if ($role_id !== 1 && $role_id !== 2) {
         $error = "Role ID tidak tersedia.";
     } else {
-        $check_query = "SELECT * FROM act_users WHERE username = '$new_username' AND username != '$username_session'";
-        $check_result = mysqli_query($conn, $check_query);
+        $check_stmt = mysqli_prepare($conn, "SELECT * FROM act_users WHERE username = ? AND username != ?");
+        mysqli_stmt_bind_param($check_stmt, "ss", $new_username, $username_session);
+        mysqli_stmt_execute($check_stmt);
+        $check_result = mysqli_stmt_get_result($check_stmt);
 
         if (mysqli_num_rows($check_result) > 0) {
             $error = "Username sudah digunakan oleh pengguna lain.";
@@ -44,39 +48,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         } else {
             if (!empty($password)) {
                 $hashed_password = md5($password);
-                $update_query = "UPDATE act_users SET 
-                    first_name = '$first_name',
-                    last_name = '$last_name',
-                    email = '$email',
-                    username = '$new_username',
-                    password = '$hashed_password',
-                    tanggal_lahir = '$birthdate',
-                    role_id = '$role_id'
-                    WHERE username = '$username_session'";
+                $update_stmt = mysqli_prepare($conn, "UPDATE act_users SET 
+                    first_name = ?, last_name = ?, email = ?, username = ?, password = ?, tanggal_lahir = ?, role_id = ? 
+                    WHERE username = ?");
+                mysqli_stmt_bind_param($update_stmt, "ssssssis", $first_name, $last_name, $email, $new_username, $hashed_password, $birthdate, $role_id, $username_session);
             } else {
-                $update_query = "UPDATE act_users SET 
-                    first_name = '$first_name',
-                    last_name = '$last_name',
-                    email = '$email',
-                    username = '$new_username',
-                    tanggal_lahir = '$birthdate',
-                    role_id = '$role_id'
-                    WHERE username = '$username_session'";
+                $update_stmt = mysqli_prepare($conn, "UPDATE act_users SET 
+                    first_name = ?, last_name = ?, email = ?, username = ?, tanggal_lahir = ?, role_id = ? 
+                    WHERE username = ?");
+                mysqli_stmt_bind_param($update_stmt, "sssssis", $first_name, $last_name, $email, $new_username, $birthdate, $role_id, $username_session);
             }
 
-            if (mysqli_query($conn, $update_query)) {
+            if (mysqli_stmt_execute($update_stmt)) {
+                mysqli_stmt_close($update_stmt);
                 $success = "Profil berhasil diperbarui.";
                 $_SESSION['username'] = $new_username;
-                $user_query = "SELECT * FROM act_users WHERE username = '$new_username'";
-                $user_result = mysqli_query($conn, $user_query);
+
+                // Ambil ulang data user terbaru
+                $user_stmt = mysqli_prepare($conn, "SELECT * FROM act_users WHERE username = ?");
+                mysqli_stmt_bind_param($user_stmt, "s", $new_username);
+                mysqli_stmt_execute($user_stmt);
+                $user_result = mysqli_stmt_get_result($user_stmt);
                 $user = mysqli_fetch_assoc($user_result);
+                mysqli_stmt_close($user_stmt);
             } else {
                 $error = "Terjadi kesalahan saat memperbarui: " . mysqli_error($conn);
             }
         }
+        mysqli_stmt_close($check_stmt);
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

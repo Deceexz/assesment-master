@@ -13,6 +13,7 @@ if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
     exit();
 }
 
+// Tangani aksi takedown atau restore
 if (isset($_GET['action']) && isset($_GET['post_id'])) {
     $post_id = intval($_GET['post_id']);
     $action = $_GET['action'];
@@ -21,7 +22,7 @@ if (isset($_GET['action']) && isset($_GET['post_id'])) {
     $update_query = "UPDATE post_article SET status = '$new_status' WHERE post_id = $post_id";
     if (mysqli_query($conn, $update_query)) {
         $notif = ($new_status === 'active') ? 'restore_success' : 'takedown_success';
-        header("Location: manage_artikel.php?notif=$notif");
+        header("Location: manage_artikel_admin.php?notif=$notif");
         exit();
     } else {
         echo "Terjadi kesalahan saat memproses data.";
@@ -29,6 +30,7 @@ if (isset($_GET['action']) && isset($_GET['post_id'])) {
     }
 }
 
+// Ambil semua artikel
 $query = "SELECT pa.*, cp.category_description 
           FROM post_article pa 
           JOIN category_post cp ON pa.category_id = cp.category_id 
@@ -212,7 +214,7 @@ $end_index = min($start_index + $articles_per_page, count($articles));
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("confirmActionBtn").addEventListener("click", () => {
       if (targetPostId && actionType) {
-        window.location.href = `manage_artikel.php?action=${actionType}&post_id=${targetPostId}`;
+        window.location.href = `manage_artikel_admin.php?action=${actionType}&post_id=${targetPostId}`;
       }
     });
 

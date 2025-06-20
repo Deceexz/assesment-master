@@ -1,5 +1,104 @@
+<?php
+session_start();
+include 'koneksi.php';
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: login_user.php");
+    exit();
+}
+
+// Statistik: Artikel per kategori
+$kategoriLabels = $kategoriCounts = [];
+$stmt1 = mysqli_prepare($conn, "
+    SELECT c.category_description, COUNT(p.post_id) AS total 
+    FROM post_article p
+    JOIN category_post c ON p.category_id = c.category_id
+    GROUP BY c.category_description
+");
+mysqli_stmt_execute($stmt1);
+$result1 = mysqli_stmt_get_result($stmt1);
+while ($row = mysqli_fetch_assoc($result1)) {
+    $kategoriLabels[] = $row['category_description'];
+    $kategoriCounts[] = $row['total'];
+}
+mysqli_stmt_close($stmt1);
+
+// Statistik: 10 Penulis terbanyak
+$penulisLabels = $penulisCounts = [];
+$stmt2 = mysqli_prepare($conn, "
+    SELECT username, COUNT(*) AS total 
+    FROM post_article 
+    GROUP BY username 
+    ORDER BY total DESC 
+    LIMIT 10
+");
+mysqli_stmt_execute($stmt2);
+$result2 = mysqli_stmt_get_result($stmt2);
+while ($row = mysqli_fetch_assoc($result2)) {
+    $penulisLabels[] = $row['username'];
+    $penulisCounts[] = $row['total'];
+}
+mysqli_stmt_close($stmt2);
+
+// Statistik: Artikel dengan Like terbanyak
+$likeArtikelLabels = $likeArtikelCounts = [];
+$stmt3 = mysqli_prepare($conn, "
+    SELECT title, total_like 
+    FROM post_article 
+    WHERE total_like > 0 
+    ORDER BY total_like DESC 
+    LIMIT 10
+");
+mysqli_stmt_execute($stmt3);
+$result3 = mysqli_stmt_get_result($stmt3);
+while ($row = mysqli_fetch_assoc($result3)) {
+    $likeArtikelLabels[] = $row['title'];
+    $likeArtikelCounts[] = $row['total_like'];
+}
+mysqli_stmt_close($stmt3);
+
+// Statistik: Penulis dengan Like terbanyak
+$likePenulisLabels = $likePenulisCounts = [];
+$stmt4 = mysqli_prepare($conn, "
+    SELECT username, SUM(total_like) as total_likes
+    FROM post_article
+    GROUP BY username
+    ORDER BY total_likes DESC
+    LIMIT 10
+");
+mysqli_stmt_execute($stmt4);
+$result4 = mysqli_stmt_get_result($stmt4);
+while ($row = mysqli_fetch_assoc($result4)) {
+    $likePenulisLabels[] = $row['username'];
+    $likePenulisCounts[] = $row['total_likes'];
+}
+mysqli_stmt_close($stmt4);
+
+// Statistik: Artikel per bulan (Januari - Desember tahun ini)
+$bulanLabels = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+$bulanCounts = array_fill(0, 12, 0);
+$currentYear = date('Y');
+
+$stmt5 = mysqli_prepare($conn, "
+    SELECT MONTH(post_date) AS bulan, COUNT(*) AS total
+    FROM post_article
+    WHERE YEAR(post_date) = ?
+    GROUP BY bulan
+");
+mysqli_stmt_bind_param($stmt5, "i", $currentYear);
+mysqli_stmt_execute($stmt5);
+$result5 = mysqli_stmt_get_result($stmt5);
+
+while ($row = mysqli_fetch_assoc($result5)) {
+    $bulanIndex = (int)$row['bulan'] - 1;
+    $bulanCounts[$bulanIndex] = (int)$row['total'];
+}
+mysqli_stmt_close($stmt5);
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,91 +106,18 @@
   <link rel="stylesheet" href="manage_user_style.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="container.css">
-
-  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #f5f5f5;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
+    h2 { text-align: center; margin-bottom: 2rem; }
     .chart-container {
-      width: 90%;
-      max-width: 900px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 16px;
+      width: 90%; max-width: 900px; margin: 2rem auto;
+      background: white; padding: 2rem; border-radius: 16px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-
-<?php
-include 'koneksi.php';
-
-// Artikel per kategori
-$queryKategori = "SELECT c.category_description, COUNT(p.post_id) AS total 
-                  FROM post_article p
-                  JOIN category_post c ON p.category_id = c.category_id
-                  GROUP BY c.category_description";
-$resultKategori = mysqli_query($conn, $queryKategori);
-$kategoriLabels = [];
-$kategoriCounts = [];
-while ($row = mysqli_fetch_assoc($resultKategori)) {
-  $kategoriLabels[] = $row['category_description'];
-  $kategoriCounts[] = $row['total'];
-}
-
-// 10 Penulis terbanyak
-$queryPenulis = "SELECT username, COUNT(*) AS total 
-                 FROM post_article 
-                 GROUP BY username 
-                 ORDER BY total DESC 
-                 LIMIT 10";
-$resultPenulis = mysqli_query($conn, $queryPenulis);
-$penulisLabels = [];
-$penulisCounts = [];
-while ($row = mysqli_fetch_assoc($resultPenulis)) {
-  $penulisLabels[] = $row['username'];
-  $penulisCounts[] = $row['total'];
-}
-
-// Artikel dengan Like terbanyak
-$queryLikeArtikel = "SELECT title, total_like 
-                     FROM post_article 
-                     WHERE total_like > 0 
-                     ORDER BY total_like DESC 
-                     LIMIT 10";
-$resultLikeArtikel = mysqli_query($conn, $queryLikeArtikel);
-$likeArtikelLabels = [];
-$likeArtikelCounts = [];
-while ($row = mysqli_fetch_assoc($resultLikeArtikel)) {
-  $likeArtikelLabels[] = $row['title'];
-  $likeArtikelCounts[] = $row['total_like'];
-}
-
-// Penulis dengan Like terbanyak
-$queryLikePenulis = "SELECT username, SUM(total_like) as total_likes
-                     FROM post_article
-                     GROUP BY username
-                     ORDER BY total_likes DESC
-                     LIMIT 10";
-$resultLikePenulis = mysqli_query($conn, $queryLikePenulis);
-$likePenulisLabels = [];
-$likePenulisCounts = [];
-while ($row = mysqli_fetch_assoc($resultLikePenulis)) {
-  $likePenulisLabels[] = $row['username'];
-  $likePenulisCounts[] = $row['total_likes'];
-}
-?>
 
 <aside id="sidebar">
   <nav class="category-bar">
@@ -122,16 +148,18 @@ while ($row = mysqli_fetch_assoc($resultLikePenulis)) {
   <canvas id="likePenulisChart"></canvas>
 </div>
 
+<div class="chart-container">
+  <h3>Jumlah Artikel per Bulan (<?php echo $currentYear; ?>)</h3>
+  <canvas id="artikelBulanChart"></canvas>
+</div>
+
 <script>
   const kategoriData = {
     labels: <?php echo json_encode($kategoriLabels); ?>,
     datasets: [{
       label: 'Jumlah Artikel',
       data: <?php echo json_encode($kategoriCounts); ?>,
-      backgroundColor: [
-        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f',
-        '#edc948', '#b07aa1', '#ff9da7', '#9c755f', '#bab0ac'
-      ]
+      backgroundColor: '#4e79a7'
     }]
   };
 
@@ -162,41 +190,49 @@ while ($row = mysqli_fetch_assoc($resultLikePenulis)) {
     }]
   };
 
+  const artikelBulanData = {
+    labels: <?php echo json_encode($bulanLabels); ?>,
+    datasets: [{
+      label: 'Jumlah Artikel per Bulan',
+      data: <?php echo json_encode($bulanCounts); ?>,
+      backgroundColor: '#76b7b2'
+    }]
+  };
+
   new Chart(document.getElementById('kategoriChart'), {
     type: 'doughnut',
     data: kategoriData,
     options: {
       responsive: true,
-      plugins: {
-        legend: { position: 'right' }
-      }
+      plugins: { legend: { position: 'right' } }
     }
   });
 
   new Chart(document.getElementById('penulisChart'), {
     type: 'bar',
     data: penulisData,
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } }
-    }
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
   });
 
   new Chart(document.getElementById('likeArtikelChart'), {
     type: 'bar',
     data: likeArtikelData,
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } }
-    }
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
   });
 
   new Chart(document.getElementById('likePenulisChart'), {
     type: 'bar',
     data: likePenulisData,
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+  });
+
+  new Chart(document.getElementById('artikelBulanChart'), {
+    type: 'bar',
+    data: artikelBulanData,
     options: {
       responsive: true,
-      scales: { y: { beginAtZero: true } }
+      scales: { y: { beginAtZero: true } },
+      plugins: { legend: { display: false } }
     }
   });
 </script>

@@ -18,19 +18,23 @@ include 'koneksi.php';
 
 $username = $_SESSION['username'];
 
+// Gunakan prepared statement untuk menghindari SQL Injection
 $query = "SELECT pa.*, cp.category_description 
-          FROM post_article pa, category_post cp 
-          WHERE username = '$username' 
-          AND pa.category_id = cp.category_id";
+          FROM post_article pa 
+          JOIN category_post cp ON pa.category_id = cp.category_id 
+          WHERE pa.username = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $username);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-$result = mysqli_query($conn, $query);
 $articles = [];
-
 if ($result && mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $articles[] = $row;
     }
 }
+mysqli_stmt_close($stmt); // Tutup statement
 
 $articles_per_page = 10;
 $total_pages = ceil(count($articles) / $articles_per_page);
